@@ -1,35 +1,30 @@
 # configured aws provider with proper credentials
-provider "aws" {
+provider "aws"  {
   region  = "us-east-1"
-  profile = "terraform-user"
+  profile = "codebuild-user-1.0"
 }
 
-
-# store the terraform state file in s3
+# store the Terraform state file in S3
 terraform {
   backend "s3" {
-    bucket  = "aosnote-terraform-state-bucket"
+    bucket  = "aosnote-terraform-state-bucket-1"
     key     = "build/terraform.tfstate"
     region  = "us-east-1"
-    profile = "terraform-user"
+    profile = "terraform-user"  # Use the correct profile here
   }
 }
 
-
-# create default vpc if one does not exit
+# create default VPC if one does not exist
 resource "aws_default_vpc" "default_vpc" {
-
   tags = {
     Name = "default vpc"
   }
 }
 
-
-# use data source to get all avalablility zones in region
+# use data source to get all availability zones in the region
 data "aws_availability_zones" "available_zones" {}
 
-
-# create default subnet if one does not exit
+# create default subnet if one does not exist
 resource "aws_default_subnet" "default_az1" {
   availability_zone = data.aws_availability_zones.available_zones.names[0]
 
@@ -38,8 +33,7 @@ resource "aws_default_subnet" "default_az1" {
   }
 }
 
-
-# create security group for the ec2 instance
+# create security group for the EC2 instance
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2 security group"
   description = "allow access on ports 80 and 22"
@@ -73,8 +67,7 @@ resource "aws_security_group" "ec2_security_group" {
   }
 }
 
-
-# use data source to get a registered amazon linux 2 ami
+# use data source to get a registered Amazon Linux 2 AMI
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]
@@ -90,14 +83,13 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
-
-# launch the ec2 instance and install website
+# launch the EC2 instance and install website
 resource "aws_instance" "ec2_instance" {
   ami                    = data.aws_ami.amazon_linux_2.id
   instance_type          = "t2.micro"
   subnet_id              = aws_default_subnet.default_az1.id
   vpc_security_group_ids = [aws_security_group.ec2_security_group.id]
-  key_name               = "myec2key"
+  key_name               = "jetest2"
   user_data              = file("install_techmax.sh")
 
   tags = {
@@ -105,8 +97,7 @@ resource "aws_instance" "ec2_instance" {
   }
 }
 
-
-# print the url of the server
+# print the URL of the server
 output "ec2_public_ipv4_url" {
   value = join("", ["http://", aws_instance.ec2_instance.public_ip])
 }
