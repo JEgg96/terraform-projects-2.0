@@ -14,4 +14,5 @@ phases:
 
   build:
     commands:
-      - ./buildspec.yml # Execute the buildspec.yml file directly
+      - cd ../.. # navigate back to the root directory
+      - ./terraform-projects-2.0/cicd/buildspec.yml # Execute the buildspec.yml file from the cicd directory
