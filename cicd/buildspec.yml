@@ -14,4 +14,4 @@ phases:
 
   build:
     commands:
-      - ./apply-terraform.sh
+      - ./buildspec.yml # Execute the buildspec.yml file directly
