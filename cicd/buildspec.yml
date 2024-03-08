@@ -7,8 +7,7 @@ phases:
 
   pre_build:
     commands:
-      - cd terraform-projects-2.0 # Change directory to the root directory
-      - cd cicd # Navigate to the cicd directory
+      - cd $CODEBUILD_SRC_DIR/cicd # Change directory to the cicd folder
       - chmod +x install-terraform.sh configure-named-profile.sh apply-terraform.sh # Make files executable
       - ./install-terraform.sh # Install Terraform
       - ./configure-named-profile.sh # Configure named profile
