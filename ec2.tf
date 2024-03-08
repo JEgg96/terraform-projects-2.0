@@ -1,30 +1,30 @@
-# configured aws provider with proper credentials
-provider "aws"  {
+# Configure the AWS provider with proper credentials
+provider "aws" {
   region  = "us-east-1"
   profile = "codebuild-user-1.0"
 }
 
-# store the Terraform state file in S3
+# Store the Terraform state file in S3
 terraform {
   backend "s3" {
-    bucket  = "aosnote-terraform-state-bucket-1"
+    bucket  = "jegg96-terraform-state-bucket-2"
     key     = "build/terraform.tfstate"
     region  = "us-east-1"
-    profile = "terraform-user"  # Use the correct profile here
+    profile = "terraform-user"
   }
 }
 
-# create default VPC if one does not exist
+# Create default VPC if one does not exist
 resource "aws_default_vpc" "default_vpc" {
   tags = {
     Name = "default vpc"
   }
 }
 
-# use data source to get all availability zones in the region
+# Use data source to get all availability zones in the region
 data "aws_availability_zones" "available_zones" {}
 
-# create default subnet if one does not exist
+# Create default subnet if one does not exist
 resource "aws_default_subnet" "default_az1" {
   availability_zone = data.aws_availability_zones.available_zones.names[0]
 
@@ -33,14 +33,14 @@ resource "aws_default_subnet" "default_az1" {
   }
 }
 
-# create security group for the EC2 instance
+# Create security group for the EC2 instance
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2 security group"
-  description = "allow access on ports 80 and 22"
+  description = "Allow access on ports 80 and 22"
   vpc_id      = aws_default_vpc.default_vpc.id
 
   ingress {
-    description = "http access"
+    description = "HTTP access"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -48,7 +48,7 @@ resource "aws_security_group" "ec2_security_group" {
   }
 
   ingress {
-    description = "ssh access"
+    description = "SSH access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -58,7 +58,7 @@ resource "aws_security_group" "ec2_security_group" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = -1
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -67,7 +67,7 @@ resource "aws_security_group" "ec2_security_group" {
   }
 }
 
-# use data source to get a registered Amazon Linux 2 AMI
+# Use data source to get a registered Amazon Linux 2 AMI
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]
@@ -83,7 +83,7 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
-# launch the EC2 instance and install website
+# Launch the EC2 instance and install website
 resource "aws_instance" "ec2_instance" {
   ami                    = data.aws_ami.amazon_linux_2.id
   instance_type          = "t2.micro"
@@ -97,7 +97,7 @@ resource "aws_instance" "ec2_instance" {
   }
 }
 
-# print the URL of the server
+# Print the URL of the server
 output "ec2_public_ipv4_url" {
-  value = join("", ["http://", aws_instance.ec2_instance.public_ip])
+  value = "http://${aws_instance.ec2_instance.public_ip}"
 }
