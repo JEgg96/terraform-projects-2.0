@@ -7,11 +7,12 @@ phases:
 
   pre_build:
     commands:
-      - cd terraform-projects-2.0/cicd # change directory
-      - chmod +x install-terraform.sh configure-named-profile.sh apply-terraform.sh # make files executable
-      - ./install-terraform.sh # install terraform
-      - ./configure-named-profile.sh # configure named profile
+      - cd terraform-projects-2.0 # Change directory to the root directory
+      - cd cicd # Navigate to the cicd directory
+      - chmod +x install-terraform.sh configure-named-profile.sh apply-terraform.sh # Make files executable
+      - ./install-terraform.sh # Install Terraform
+      - ./configure-named-profile.sh # Configure named profile
 
   build:
     commands:
-      - ./apply-terraform.sh
+      - ./apply-terraform.sh # Execute Terraform apply
