@@ -10,7 +10,7 @@ terraform {
     bucket  = "jegg96-terraform-state-bucket-2"
     key     = "build/terraform.tfstate"
     region  = "us-east-1"
-    profile = "terraform-user"
+    profile = "codebuild-user-1.0"
   }
 }
 
